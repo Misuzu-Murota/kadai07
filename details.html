@@ -17,13 +17,65 @@
       <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/sample.css">
     <title>個人別結果</title>
+    <style>
+        /* グラフを2列に並べるためのスタイル */
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* グラフの間隔を設定 */
+        }
+        .chart-container canvas {
+            width: 300px ; /* グラフの幅 */
+            height: 300px !important; /* グラフの高さ */
+        }
+    </style>
+    <title>個人別結果</title>
 </head>
 <body>
     <div>
         <h1>個人別結果</h1>
-        <div id="past-comments-container"></div>
-        <canvas id="resultChart" width="600" height="400"></canvas>
-    </div>
+        <div id="past-comments-container">
+        <div class="chart-container">
+            <div>
+                <canvas id="resultChartImpression"></canvas>
+            </div>
+            <div>
+                <canvas id="resultChartQ3_1"></canvas>
+            </div>
+            <div>
+                <canvas id="resultChartQ3_2"></canvas>
+            </div>
+            <div>
+              <h2>AIさんによる一言分析</h2>
+              <div id="ai-comment"></div>
+            </div>
+        </div>
+        <div class="table-container">
+          <table id="data-table">
+              <thead>
+                  <tr>
+                      <th class="date">日付</th>
+                      <th>課題項目</th>
+                      <th>課題内容</th>
+                      <th>課題の原因</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- データはここに追加されます -->
+                  <tr>
+                      <td class="date">2024-09-07</td>
+                      <td>選択肢1<br>選択肢2</td>
+                      <td>課題内容のサンプル</td>
+                      <td>課題の原因のサンプル</td>
+                  </tr>
+                  <!-- 追加のデータ行 -->
+              </tbody>
+          </table>
+      </div>
 
+
+
+      </div>
+    </div>
 </body>
 </html>

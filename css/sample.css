@@ -199,7 +199,7 @@ input[type="checkbox"], input[type="radio"] {
 
 /* コメントコンテナ */
 #past-comments-container {
-    max-height: 300px;  /* ボックスの高さを設定 */
+    max-height: 1000px;  /* ボックスの高さを設定 */
     overflow-y: auto;   /* 縦方向のスクロールを許可 */
     border: 1px solid #ccc;  /* ボックスの枠線 */
     padding: 10px;
@@ -223,4 +223,57 @@ input[type="checkbox"], input[type="radio"] {
     height: auto; /* アイコンの高さ（幅に合わせて自動調整） */
     vertical-align: middle; /* テキストとアイコンを縦に揃える */
     margin-right: 8px; /* アイコンとテキストの間にスペースを追加 */
+}
+
+/* テーブル全体のスタイル */
+.table-container {
+    width: 100%;
+    max-height: 400px; /* 親要素の最大高さを設定 */
+    overflow-y: auto; /* 縦方向のスクロールを有効にする */
+    border: 1px solid #dddddd; /* テーブルの周りに境界線を追加 */
+    margin-bottom: 20px; /* テーブルの下にマージンを追加 */
+}
+
+/* テーブルのスタイル */
+#data-table {
+    width: 100%;
+    border-collapse: collapse; /* セルの境界線を重ねて表示する */
+    table-layout: fixed; /* 列幅を固定する */
+}
+
+/* テーブルヘッダーのスタイル */
+#data-table th {
+    border: 1px solid #dddddd; /* 軽いグレーの境界線 */
+    padding: 8px; /* セル内のパディング */
+    text-align: left; /* テキストを左揃え */
+    background-color: #f2f2f2; /* ヘッダーの背景色 */
+    position: sticky; /* スクロール時に固定 */
+    top: 0; /* 上に固定 */
+    z-index: 1; /* 他の行と重ならないようにする */
+}
+
+/* テーブルデータセルのスタイル */
+#data-table td {
+    border: 1px solid #dddddd; /* 軽いグレーの境界線 */
+    padding: 8px; /* セル内のパディング */
+}
+
+/* 日付列のスタイル */
+#data-table td.date {
+    width: 200px; /* 日付列の幅を広くする */
+}
+
+/* 課題項目列のスタイル */
+#data-table td.issue {
+    width: 150px; /* 課題項目列の幅を狭くする */
+    word-wrap: break-word; /* テキストを折り返す */
+}
+
+/* 行の背景色を交互にするスタイル（オプション） */
+#data-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* 偶数行の背景色 */
+}
+
+#data-table tr:hover {
+    background-color: #f1f1f1; /* 行にマウスを乗せた時の背景色 */
 }
