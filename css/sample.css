@@ -1,0 +1,226 @@
+body, h1, h2, h3, p, label, input, select, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* 全体のスタイル */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
+}
+/* コンテナ */
+div {
+    margin-bottom: 20px;
+}
+
+/* ヘッダー */
+h1 {
+    font-size: 1.8em;
+    color: #5a5a5a;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #6a6a6a;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 1.2em;
+    color: #7a7a7a;
+    margin-bottom: 10px;
+}
+
+/* ラベルと入力 */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #5a5a5a;
+}
+
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #aab;
+    outline: none;
+}
+
+/* チェックボックス、ラジオボタン */
+input[type="checkbox"], input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* ボタン */
+#button1 {
+    width: 170px;
+    background-color: #6ba4ff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+#button1:hover {
+    background-color: #5793e6;
+}
+#button2 {
+    width: 170px;
+    background-color: #c48207;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+#button2:hover {
+    background-color: #a17014;
+}
+#button3 {
+    width: 170px;
+    background-color: #469902;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+#button3:hover {
+    background-color: #2e6104;
+}
+
+.button{
+    display: flex;
+    align-items: center; /* ラベルと入力ボックスを縦に揃える */
+    flex-wrap: wrap;
+    gap: 20px; /* セクション間の隙間 */
+}
+
+/* エラーメッセージ */
+.error-message {
+    display: none;  /* デフォルトでは非表示 */
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: 5px; /* 上部に少しスペースを追加 */
+    display: block;  /* エラーが発生した場合に表示 */
+}
+/* ラベルと入力ボックスを整列させる */
+.shozoku {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* セクション間の隙間 */
+}
+
+.shozoku div {
+    display: flex;
+    align-items: center; /* ラベルと入力ボックスを縦に揃える */
+    flex: 1 1 calc(50% - 20px); /* 2列に並ぶように設定 */
+    box-sizing: border-box; /* マージンやパディングが幅に含まれるように */
+}
+
+/* ラベルのスタイル */
+.shozoku label {
+    flex: 0 0 40%; /* ラベルの幅を30%に設定 */
+    margin-right: 10px; /* ラベルと入力ボックスの間の隙間を追加 */
+}
+
+/* 入力ボックスのスタイル */
+.shozoku input[type="text"], 
+.shozoku input[type="number"], 
+.shozoku select {
+    flex: 1; /* 入力ボックスの幅を残りのスペースに設定 */
+    max-width: 70%; /* 最大幅を100%に設定し、カラム内に収める */
+}
+#impression {
+    width: 50%; /* 入力ボックスの幅を50%に設定 */
+}
+#careerimpact {
+    width: 50%; /* 入力ボックスの幅を50%に設定 */
+}
+#solve {
+    width: 50%; /* 入力ボックスの幅を50%に設定 */
+}
+/* 特定の入力ボックス（id="q1"）の高さを倍にする */
+#q1 {
+    height: 5em; /* 高さを5emに設定 */
+    padding: 16px; /* 内側の余白も調整 */
+    box-sizing: border-box; /* パディングとボーダーを含むサイズ指定 */
+}
+#q2-2 {
+    height: 5em; /* 高さを5emに設定 */
+    padding: 16px; /* 内側の余白も調整 */
+    box-sizing: border-box; /* パディングとボーダーを含むサイズ指定 */
+}
+#q2-3 {
+    height: 5em; /* 高さを5emに設定 */
+    padding: 16px; /* 内側の余白も調整 */
+    box-sizing: border-box; /* パディングとボーダーを含むサイズ指定 */
+}
+/* チェックボックスのグループを2列で並べる */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* チェックボックス間の隙間 */
+}
+
+.checkbox-group div {
+    flex: 1 1 calc(50% - 20px); /* 2列に並ぶように */
+    display: flex;
+    align-items: center; /* チェックボックスとラベルを縦に揃える */
+}
+/* 結果表示エリア */
+#view {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 過去のコメント */
+#preresults {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* コメントコンテナ */
+#past-comments-container {
+    max-height: 300px;  /* ボックスの高さを設定 */
+    overflow-y: auto;   /* 縦方向のスクロールを許可 */
+    border: 1px solid #ccc;  /* ボックスの枠線 */
+    padding: 10px;
+    background-color: #f9f9f9;  /* ボックスの背景色 */
+}
+#past-comments-container > div {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#past-comments-container > div:last-child {
+    border-bottom: none;
+}
+#preresults h3 {
+    margin-bottom: 10px;
+}
+
+
+.ai-icon {
+    width: 20px; /* アイコンの幅 */
+    height: auto; /* アイコンの高さ（幅に合わせて自動調整） */
+    vertical-align: middle; /* テキストとアイコンを縦に揃える */
+    margin-right: 8px; /* アイコンとテキストの間にスペースを追加 */
+}
