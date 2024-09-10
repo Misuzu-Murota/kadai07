@@ -265,6 +265,48 @@ $(document).ready(function() {
         }
     });
 
+    $('#button3').on('click', async function() {
+        const busho = $('#busho').val(); // 社員番号を取得
+        if (busho) {
+            try {
+                // Firebaseから全データを取得
+                const queryRef = ref(db, 'shindan'); // 'shindan'は文字列として指定
+                const snapshot = await get(queryRef);
+                let dataToSend = {};
+    
+                // 部署に基づいてデータをフィルタリング
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    if (data.busho === busho) {
+                        // bushoに基づいたデータをdataToSendに格納
+                        dataToSend[childSnapshot.key] = data;
+                    }
+                });
+    
+                // データが見つかった場合にlocalStorageに保存し、details.htmlを開く
+                if (Object.keys(dataToSend).length > 0) {
+                    // データをJSON文字列に変換してlocalStorageに保存
+                    const dataString = JSON.stringify(dataToSend);
+                    localStorage.setItem('employeeData', dataString);
+    
+                    // 新しいタブで "details.html" ページを開く
+                    window.open('team.html', '_blank');
+                } else {
+                    alert("指定された社員番号のデータが見つかりません。");
+                }
+            } catch (error) {
+                console.error('データの取得に失敗しました:', error);
+            }
+        } else {
+            alert("部署を入力してください");
+        }
+    });
+
+
+
+
+
+
     });
 
 
