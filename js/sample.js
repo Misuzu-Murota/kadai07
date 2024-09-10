@@ -3,7 +3,7 @@ import { firebaseConfig } from "./firebase.js";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { 
-    getDatabase, ref, push, set, remove, update, onChildAdded, onChildChanged, onChildRemoved, serverTimestamp 
+    getDatabase, ref, push, set, remove, update, onChildAdded, onChildChanged, onChildRemoved, serverTimestamp, get 
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,19 +19,43 @@ import { model } from "./firebase.js";
 $(document).ready(function() {
     $(".error-message").hide();
 
-    $('#button2').on('click', function() {
-        // 社員番号を取得
-        const shainno = $("#shainno").val();
-        if (shainno) {
-            // 新しいタブで "details.html" ページを開く
-            window.open(`details.html?shainno=${shainno}`, '_blank');
-        } else {
-            alert("社員番号を入力してください。");
-        }
-    });
+    
 
+ // 「前回データを読み込む」ボタンの処理
+ $('#button0').on('click', function() {
+    console.log("「前回データを読み込む」ボタンがクリックされました。");
+    const shainno = $("#shainno").val();
+    if (shainno) {
+        console.log("社員番号:", shainno);
+        const queryRef = ref(db, 'shindan');
+        get(queryRef).then((snapshot) => {
+            console.log("データ取得成功");
+            let dataFound = false;
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                console.log("取得したデータ:", data);
+                if (data.shainno === shainno) {
+                    $('#gender').val(data.gender);
+                    $('#age').val(data.age);
+                    $('#busho').val(data.busho);
+                    $('#yakushoku').val(data.yakushoku);
+                    $('#year').val(data.year);
+                    dataFound = true;
+                    return;
+                }
+            });
+            if (!dataFound) {
+                alert("指定された社員番号のデータが見つかりません。");
+            }
+        }).catch((error) => {
+            console.error('過去データの読み込みに失敗しました:', error);
+        });
+    } else {
+        alert("社員番号を入力してください。");
+    }
+});
 
-    $('button').on('click', async function(e) {
+    $('#button1').on('click', async function(e) {
         e.preventDefault();  // デフォルトのフォーム送信を防ぐ
 
         // エラーメッセージを初期化
@@ -42,7 +66,7 @@ $(document).ready(function() {
 
         // 必須項目のチェック
      // 社員番号のチェック（6桁かどうか）
-    const shainno = $("#shainno").val();
+     const shainno = $("#shainno").val();
     if (shainno.length !== 6) {
         $("#shainno-error").show();  // エラーメッセージを表示
         isValid = false;
@@ -203,6 +227,44 @@ $(document).ready(function() {
             <p>${cleanText}</p>
         `);
     }
+
+    $('#button2').on('click', async function() {
+        const shainno = $('#shainno').val(); // 社員番号を取得
+        if (shainno) {
+            try {
+                // Firebaseから全データを取得
+                const queryRef = ref(db, 'shindan'); // 'shindan'は文字列として指定
+                const snapshot = await get(queryRef);
+                let dataToSend = {};
+    
+                // 社員番号に基づいてデータをフィルタリング
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    if (data.shainno === shainno) {
+                        // shainnoに基づいたデータをdataToSendに格納
+                        dataToSend[childSnapshot.key] = data;
+                    }
+                });
+    
+                // データが見つかった場合にlocalStorageに保存し、details.htmlを開く
+                if (Object.keys(dataToSend).length > 0) {
+                    // データをJSON文字列に変換してlocalStorageに保存
+                    const dataString = JSON.stringify(dataToSend);
+                    localStorage.setItem('employeeData', dataString);
+    
+                    // 新しいタブで "details.html" ページを開く
+                    window.open('details.html', '_blank');
+                } else {
+                    alert("指定された社員番号のデータが見つかりません。");
+                }
+            } catch (error) {
+                console.error('データの取得に失敗しました:', error);
+            }
+        } else {
+            alert("社員番号を入力してください");
+        }
+    });
+
     });
 
 
