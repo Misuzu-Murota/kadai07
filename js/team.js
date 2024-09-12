@@ -251,7 +251,8 @@ $(document).ready(async function() {
         const date = new Date(timestamp);
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
-
+    
+    // Geminiにコメント生成依頼
     generateCommentAndSave();
     async function generateCommentAndSave() {
         const dataString = localStorage.getItem('employeeData');
@@ -274,21 +275,24 @@ $(document).ready(async function() {
                     return acc;
                 }, {});
     
+            // 社員番号単位でデータを持つ
                 for (const [employeeId, records] of Object.entries(groupedData)) {
                     const latestRecord = records[records.length - 1];
                     const historicalRecords = records.slice(0, -1);
-    
+               
+            // 最新の回答結果
                     const latestImpression = latestRecord.impression;
                     const latestQ3_1 = latestRecord.careerimpact;
                     const latestQ3_2 = latestRecord.solve;
     
+            // 過去の回答結果
                     const historicalImpression = historicalRecords.map(r => r.impression);
                     const historicalQ3_1 = historicalRecords.map(r => r.careerimpact);
                     const historicalQ3_2 = historicalRecords.map(r => r.solve);
     
                     const prompt = `${employeeId} が感じている組織へのエンゲージメントは、所属する組織に対する評価が「${latestImpression}」、組織課題の今後のキャリアへの影響度が「${latestQ3_1}」、問題解決への意欲は「${latestQ3_2}」です。過去のデータでは、所属する組織に対する評価が「${historicalImpression.join(', ')}」、組織課題の今後のキャリアへの影響度が「${historicalQ3_1.join(', ')}」、問題解決への意欲が「${historicalQ3_2.join(', ')}」です。この情報をもとに現在の組織へのエンゲージメントを250字で生成してください。`;
     
-                    // コメント生成
+            // コメント生成依頼
                     const result = await model.generateContent(prompt);
                     console.log("生成結果:", result);
     
@@ -304,7 +308,7 @@ $(document).ready(async function() {
             }
         }
     }
-
+    // コメントを表示、社員番号ごとに表示する
     function displayComment(employeeId, text) {
         let commentElement = $(`#ai-comment-${employeeId}`);
         console.log(commentElement);
