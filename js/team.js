@@ -252,7 +252,7 @@ $(document).ready(async function() {
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
 
-    // コメント生成のためのプロンプトを作成
+    generateCommentAndSave();
     async function generateCommentAndSave() {
         const dataString = localStorage.getItem('employeeData');
         console.log("取得したデータ:", dataString);
@@ -265,7 +265,6 @@ $(document).ready(async function() {
             }
     
             if (Array.isArray(data)) {
-                // 社員ごとにデータをグループ化
                 const groupedData = data.reduce((acc, record) => {
                     const employeeId = record.shainno;
                     if (!acc[employeeId]) {
@@ -276,7 +275,6 @@ $(document).ready(async function() {
                 }, {});
     
                 for (const [employeeId, records] of Object.entries(groupedData)) {
-                    // 最新のデータと過去のデータを分ける
                     const latestRecord = records[records.length - 1];
                     const historicalRecords = records.slice(0, -1);
     
@@ -288,50 +286,33 @@ $(document).ready(async function() {
                     const historicalQ3_1 = historicalRecords.map(r => r.careerimpact);
                     const historicalQ3_2 = historicalRecords.map(r => r.solve);
     
-                    const prompt = ` ${employeeId} の最近のフィードバックは、Impression が「${latestImpression}」、Q3-1（キャリアに対する影響）が「${latestQ3_1}」、Q3-2（問題解決への影響）が「${latestQ3_2}」です。過去のデータでは、Impression が「${historicalImpression.join(', ')}」、Q3-1 が「${historicalQ3_1.join(', ')}」、Q3-2 が「${historicalQ3_2.join(', ')}」です。この情報をもとに、以下のようなコメントを生成してください。`;
-
-                    // APIキーとエンドポイントを firebase.js から取得
-                  
+                    const prompt = `${employeeId} が感じている組織へのエンゲージメントは、所属する組織に対する評価が「${latestImpression}」、組織課題の今後のキャリアへの影響度が「${latestQ3_1}」、問題解決への意欲は「${latestQ3_2}」です。過去のデータでは、所属する組織に対する評価が「${historicalImpression.join(', ')}」、組織課題の今後のキャリアへの影響度が「${historicalQ3_1.join(', ')}」、問題解決への意欲が「${historicalQ3_2.join(', ')}」です。この情報をもとに現在の組織へのエンゲージメントを250字で生成してください。`;
     
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${genAI}`
-                        },
-                        body: JSON.stringify({
-                            model: model,
-                            prompt: prompt,
-                            max_tokens: 150
-                        })
-                    });
+                    // コメント生成
+                    const result = await model.generateContent(prompt);
+                    console.log("生成結果:", result);
     
-                    if (response.ok) {
-                        const result = await response.json();
-                        const comment = result.choices[0].text.trim();
+                    const response = await result.response;
+                    console.log("レスポンス:", response);
     
-                        // コメントを Firebase に保存
-                        const commentRef = firebase.database().ref(`comments/${employeeId}`);
-                        await commentRef.set({
-                            comment: comment,
-                            timestamp: new Date().toISOString()
-                        });
-                        console.log(`Generated comment for ${employeeId}:`, comment);
-                    } else {
-                        console.error(`Failed to generate comment for ${employeeId}`);
-                    }
+                    const text = await response.text();
+                    console.log("生成されたコメント:", text);
+    
+                    // コメントを表示
+                    displayComment(employeeId, text); // 修正: text を渡す
                 }
             }
         }
     }
 
-    function displayComment(employeeId, commentText) {
+    function displayComment(employeeId, text) {
         let commentElement = $(`#ai-comment-${employeeId}`);
+        console.log(commentElement);
         if (commentElement.length === 0) {
             $('#commentsContainer').append(`<div id="ai-comment-${employeeId}" class="comment"></div>`);
             commentElement = $(`#ai-comment-${employeeId}`);
         }
-        commentElement.text(commentText);
+        commentElement.text(text);  // 修正: commentText → text
     }
 
 });
