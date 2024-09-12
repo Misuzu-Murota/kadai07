@@ -14,8 +14,7 @@ const db = getDatabase(app);
 const dbRef = ref(db,"shindan");
 
 // geminiを設定
-import { model } from './firebase.js';
-
+import { genAI, model } from './firebase.js';
 
 const scores = {
     "うまく回っている": 4,
@@ -254,7 +253,6 @@ $(document).ready(async function() {
     }
 
     // コメント生成のためのプロンプトを作成
-    generateCommentAndSave();
     async function generateCommentAndSave() {
         const dataString = localStorage.getItem('employeeData');
         console.log("取得したデータ:", dataString);
@@ -290,33 +288,40 @@ $(document).ready(async function() {
                     const historicalQ3_1 = historicalRecords.map(r => r.careerimpact);
                     const historicalQ3_2 = historicalRecords.map(r => r.solve);
     
-                    const prompt = ` ${employeeId} の最近のフィードバックは、Impression が「${latestImpression}」、Q3-1（キャリアに対する影響）が「${latestQ3_1}」、Q3-2（問題解決への影響）が「${latestQ3_2}」です。過去のデータでは、Impression が「${historicalImpression.join(', ')}」、Q3-1 が「${historicalQ3_1.join(', ')}」、Q3-2 が「${historicalQ3_2.join(', ')}」です。この情報を基に、最近の傾向や変化、所属組織に対するエンゲージメントを簡潔に3行で分析してください。`;
-                    console.log(prompt)
-                    const comment = await requestAIComment(prompt);
-                    displayComment(employeeId, comment);
+                    const prompt = ` ${employeeId} の最近のフィードバックは、Impression が「${latestImpression}」、Q3-1（キャリアに対する影響）が「${latestQ3_1}」、Q3-2（問題解決への影響）が「${latestQ3_2}」です。過去のデータでは、Impression が「${historicalImpression.join(', ')}」、Q3-1 が「${historicalQ3_1.join(', ')}」、Q3-2 が「${historicalQ3_2.join(', ')}」です。この情報をもとに、以下のようなコメントを生成してください。`;
+
+                    // APIキーとエンドポイントを firebase.js から取得
+                  
+    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${genAI}`
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            prompt: prompt,
+                            max_tokens: 150
+                        })
+                    });
+    
+                    if (response.ok) {
+                        const result = await response.json();
+                        const comment = result.choices[0].text.trim();
+    
+                        // コメントを Firebase に保存
+                        const commentRef = firebase.database().ref(`comments/${employeeId}`);
+                        await commentRef.set({
+                            comment: comment,
+                            timestamp: new Date().toISOString()
+                        });
+                        console.log(`Generated comment for ${employeeId}:`, comment);
+                    } else {
+                        console.error(`Failed to generate comment for ${employeeId}`);
+                    }
                 }
             }
-        }
-    
-    }
-    console.log(model)
-    async function requestAIComment(prompt) {
-        try {
-            // モデルの正しいメソッドを使用してコメントを生成
-            const response = await model.generateContent({
-                prompt: prompt,
-                max_tokens: 100 // 3行程度のコメント生成に必要なトークン数
-            });
-    
-            // レスポンスの内容を確認
-            console.log(response);
-    
-            // 正しいプロパティにアクセス
-            const comment = response.choices[0].text.trim();
-            return comment;
-        } catch (error) {
-            console.error('AI APIリクエストエラー:', error);
-            return 'コメント生成に失敗しました';
         }
     }
 
@@ -329,5 +334,4 @@ $(document).ready(async function() {
         commentElement.text(commentText);
     }
 
-    generateCommentAndSave();
 });
