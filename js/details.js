@@ -14,7 +14,7 @@ const db = getDatabase(app);
 const dbRef = ref(db,"shindan");
 
 // geminiを設定
-import { model } from "./firebase.js";
+import { model } from './firebase.js';
 
 const scores = {
     "うまく回っている": 4,
@@ -92,6 +92,7 @@ $(document).ready(function() {
         }
     }
 
+    // グラフを作成または更新する関数
     function createOrUpdateCharts() {
         createOrUpdateChartImpression(labels, dataImpression);
         createOrUpdateChartQ3_1(labels, dataQ3_1);
@@ -274,6 +275,51 @@ $(document).ready(function() {
             chartQ3_2.update();
         }
     }
+
+    // コメント生成のためのプロンプトを作成
+    generateCommentAndSave();
+    async function generateCommentAndSave() {
+          // 変数の定義（例として初期値を設定）
+    const latestImpression = dataImpression[dataImpression.length - 1];
+    const latestQ3_1 = dataQ3_1[dataQ3_1.length - 1];
+    const latestQ3_2 = dataQ3_2[dataQ3_2.length - 1];
+
+    // 過去のデータも取得
+    const historicalImpression = dataImpression.slice(0, -1); // 最新データを除く
+    const historicalQ3_1 = dataQ3_1.slice(0, -1);
+    const historicalQ3_2 = dataQ3_2.slice(0, -1);
+
+    // プロンプトの作成
+    const prompt = `
+過去の所属組織に対する評価、組織課題の今後のキャリアへの影響度、組織課題の解決意欲の結果に基づき、経年変化の傾向、最近のトレンドやパターン、具体的な変化を分析してください。
+過去のデータ: 所属組織に対する評価: ${historicalImpression}, 組織課題の今後のキャリアへの影響度: ${historicalQ3_1}, 組織課題の解決意欲: ${historicalQ3_2}
+最新のデータ: 所属組織に対する評価: ${latestImpression}, 組織課題の今後のキャリアへの影響度: ${latestQ3_1}, 組織課題の解決意欲: ${latestQ3_2}
+この分析を基に、最近の傾向について200字以内でコメントを生成してください。
+`;
+try {
+    const result = await model.generateContent(prompt);
+    console.log("生成結果:", result);
+
+    const response = await result.response;
+    console.log("レスポンス:", response);
+    
+    const text = await response.text();
+    console.log("生成されたコメント:", text);
+
+    // コメントをページ上に表示
+    $('#ai-comment').text(text);
+
+    const formData = {
+        generatedComment: text
+    };
+
+    const newPostRef = push(dbRef);
+    await set(newPostRef, formData);
+    console.log("データがFirebaseに保存されました");
+} catch (error) {
+    console.error("コメント生成または保存中にエラーが発生しました:", error);
+}
+}
 
     function updateTableWithFirebaseData(date, options, q2_2, q2_3) {
          // 表の tbody をクリア

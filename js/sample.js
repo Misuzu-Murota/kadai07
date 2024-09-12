@@ -175,19 +175,7 @@ $(document).ready(function() {
         // 社員番号で過去のコメントを取得して表示
         displayPastComments(shainno);
 
-         // フォーム内容をクリア
-         $('#shainno').val('');
-         $('#busho').val('');
-         $('#yakushoku').val('');
-         $('#year').val('');
-         $('#gender').val('');
-         $('#age').val('');
-         $('#impression').val('');
-         $('#careerimpact').val('');
-         $('#solve').val('');
-         $('input[name="options"]').prop('checked', false);  // チェックボックスのリセット
-         $('#q2-2').val('');
-         $('#q2-3').val('');
+
 
 
         } catch (error) {
@@ -266,11 +254,11 @@ $(document).ready(function() {
     });
 
     $('#button3').on('click', async function() {
-        const busho = $('#busho').val(); // 社員番号を取得
+        const busho = $('#busho').val(); // 部署を取得
         if (busho) {
             try {
                 // Firebaseから全データを取得
-                const queryRef = ref(db, 'shindan'); // 'shindan'は文字列として指定
+                const queryRef = ref(db, 'shindan');
                 const snapshot = await get(queryRef);
                 let dataToSend = {};
     
@@ -283,16 +271,16 @@ $(document).ready(function() {
                     }
                 });
     
-                // データが見つかった場合にlocalStorageに保存し、details.htmlを開く
+                // データが見つかった場合にlocalStorageに保存し、team.htmlを開く
                 if (Object.keys(dataToSend).length > 0) {
                     // データをJSON文字列に変換してlocalStorageに保存
                     const dataString = JSON.stringify(dataToSend);
                     localStorage.setItem('employeeData', dataString);
     
-                    // 新しいタブで "details.html" ページを開く
+                    // 新しいタブで "team.html" ページを開く
                     window.open('team.html', '_blank');
                 } else {
-                    alert("指定された社員番号のデータが見つかりません。");
+                    alert("指定された部署のデータが見つかりません。");
                 }
             } catch (error) {
                 console.error('データの取得に失敗しました:', error);
@@ -301,11 +289,6 @@ $(document).ready(function() {
             alert("部署を入力してください");
         }
     });
-
-
-
-
-
 
     });
 

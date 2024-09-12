@@ -13,7 +13,7 @@
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-      <script type="module" src="js/details.js"></script>
+      <script type="module" src="js/team.js"></script>
       <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/sample.css">
     <title>組織別結果</title>
@@ -31,7 +31,26 @@
     </style>
 </head>
 <body>
-    
+  <div id="past-comments-container">
+    <h1 id="teamname"></h1>
+  <div class="chart-container">
+    <div>
+        <canvas id="impressionChart"></canvas>
+    </div>
+    <div>
+        <canvas id="q3_1Chart"></canvas>
+    </div>
+    <div>
+        <canvas id="q3_2Chart"></canvas>
+    </div>
+    <div>
+      <h2>AIさんによる一言分析</h2>
+      <!-- コメント表示用の要素 -->
+      <div id="commentsContainer"></div>
+    </div>
+  </div>
+
+</div>
 
 
     
